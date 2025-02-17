@@ -34,11 +34,13 @@ jobs:
           ARTIFACT_NAME="${{ matrix.build.name }}-${{ matrix.build.platform }}"
           ARTIFACT_NAME="${ARTIFACT_NAME//\//-}"
           echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV
+        shell: bash
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ARTIFACT_NAME }}
           path: build/bin/${{ matrix.build.name }}*
+          overwrite: true
 
   create-universal-binary:
     needs: build
@@ -56,11 +58,24 @@ jobs:
           name: build-test-darwin-arm64
           path: arm64-build
 
+      - name: List downloaded files
+        run: |
+          echo "amd64 files:"
+          ls -la amd64-build/
+          echo "arm64 files:"
+          ls -la arm64-build/
+
       - name: Create universal binary
         run: |
           # First extract both zip files
           unzip "amd64-build/build-test-darwin-amd64.zip" -d amd64-app
           unzip "arm64-build/build-test-darwin-arm64.zip" -d arm64-app
+
+          # List extracted files
+          echo "Extracted amd64 files:"
+          ls -la amd64-app
+          echo "Extracted arm64 files:"
+          ls -la arm64-app
 
           # Create directory structure for universal binary
           mkdir -p universal-app/build-test.app/Contents/MacOS
@@ -71,7 +86,7 @@ jobs:
             "arm64-app/build-test.app/Contents/MacOS/build-test" \
             -output "universal-app/build-test.app/Contents/MacOS/build-test"
 
-          # Copy all other necessary files (Info.plist, resources, etc.)
+          # Copy all other necessary files from one of the builds (using amd64 as source)
           cp -R amd64-app/build-test.app/Contents/Resources universal-app/build-test.app/Contents/
           cp amd64-app/build-test.app/Contents/Info.plist universal-app/build-test.app/Contents/
 
@@ -86,3 +101,4 @@ jobs:
         with:
           name: build-test-darwin-universal
           path: build-test-darwin-universal.zip
+          overwrite: true
