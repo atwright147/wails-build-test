@@ -27,7 +27,7 @@ jobs:
         if: matrix.build.platform == 'darwin/amd64' || matrix.build.platform == 'darwin/arm64'
         run: |
           ls -la build/bin/
-          chmod +x build/bin/.app/Contents/MacOS/
+          chmod +x build/bin/build-test.app/Contents/MacOS/build-test
           ditto -c -k --keepParent "build/bin/build-test.app" "build/bin/${{ matrix.build.name }}-${{ matrix.build.platform }}.zip"
       - name: Set artifact name
         run: |
