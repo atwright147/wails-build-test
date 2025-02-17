@@ -8,10 +8,10 @@ jobs:
       fail-fast: false
       matrix:
         build: [
-          {platform: linux/amd64, os: ubuntu-latest, artifact: linux-amd64},
-          {platform: windows/amd64, os: windows-latest, artifact: windows-amd64},
-          {platform: darwin/amd64, os: macos-latest, artifact: macos-amd64},
-          {platform: darwin/arm64, os: macos-latest, artifact: macos-arm64}
+          {name: build-test, platform: linux/amd64, os: ubuntu-latest},
+          {name: build-test, platform: windows/amd64, os: windows-latest},
+          {name: build-test, platform: darwin/amd64, os: macos-latest},
+          {name: build-test, platform: darwin/arm64, os: macos-latest}
         ]
     runs-on: ${{ matrix.build.os }}
     steps:
@@ -20,21 +20,23 @@ jobs:
           submodules: recursive
       - uses: dAppServer/wails-build-action@main
         with:
-          build-name: build-test-${{ env.PLATFORM_SAFE }} # Use the env variable here
+          build-name: ${{ matrix.build.name }}
           build-platform: ${{ matrix.build.platform }}
           build-obfuscate: true
-      - name: Set platform variable
-        id: platform_variable
-        run: |
-          echo "PLATFORM_SAFE=$(echo "${{ matrix.build.platform }}" | sed 's/\//-/g')" >> $GITHUB_ENV # Use sed to replace
       - name: Package macOS application
         if: matrix.build.platform == 'darwin/amd64' || matrix.build.platform == 'darwin/arm64'
         run: |
-          APP_NAME="build-test" # The .app bundle name is ALWAYS build-test.app
-          chmod +x build/bin/${APP_NAME}.app/Contents/MacOS/${APP_NAME}-${{ env.PLATFORM_SAFE }} # Use the env variable
-          ditto -c -k --keepParent "build/bin/${APP_NAME}.app" "build/bin/${{ matrix.build.artifact }}.zip" # Correct ditto path
+          ls -la build/bin/
+          chmod +x build/bin/*.app/Contents/MacOS/*
+          ditto -c -k --keepParent build/bin/build-test.app build/bin/${{ matrix.build.name }}-${{ matrix.build.platform }}.zip
+      - name: Set artifact name
+        run: |
+          ARTIFACT_NAME="${{ matrix.build.name }}-${{ matrix.build.platform }}"
+          ARTIFACT_NAME="${ARTIFACT_NAME//\//-}"
+          echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV
+        shell: bash
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: build-test-${{ env.PLATFORM_SAFE }}-${{ matrix.build.artifact }} # Use the env variable
-          path: build/bin/${{ matrix.build.artifact }}.zip
+          name: ${{ env.ARTIFACT_NAME }}
+          path: build/bin/${{ matrix.build.name }}*
