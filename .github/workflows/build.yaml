@@ -31,7 +31,7 @@ jobs:
           ditto -c -k --keepParent "build/bin/build-test.app" "build/bin/${{ matrix.build.name }}-${{ matrix.build.platform }}.zip"
       - name: Set artifact name
         run: |
-          ARTIFACT_NAME="${{ matrix.build.name }}-${{ matrix.build.platform }}"
+          ARTIFACT_NAME="${{ matrix.build.name }}-${{ matrix.build.platform }}-${{ github.run_id }}"
           ARTIFACT_NAME="${ARTIFACT_NAME//\//-}"
           echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV
         shell: bash
@@ -40,7 +40,6 @@ jobs:
         with:
           name: ${{ env.ARTIFACT_NAME }}
           path: build/bin/${{ matrix.build.name }}*
-          overwrite: true
 
   create-universal-binary:
     needs: build
@@ -49,13 +48,13 @@ jobs:
       - name: Download amd64 artifact
         uses: actions/download-artifact@v4
         with:
-          name: build-test-darwin-amd64
+          name: build-test-darwin-amd64-${{ github.run_id }}
           path: amd64-build
 
       - name: Download arm64 artifact
         uses: actions/download-artifact@v4
         with:
-          name: build-test-darwin-arm64
+          name: build-test-darwin-arm64-${{ github.run_id }}
           path: arm64-build
 
       - name: List downloaded files
@@ -99,6 +98,5 @@ jobs:
       - name: Upload universal binary
         uses: actions/upload-artifact@v4
         with:
-          name: build-test-darwin-universal
+          name: build-test-darwin-universal-${{ github.run_id }}
           path: build-test-darwin-universal.zip
-          overwrite: true
