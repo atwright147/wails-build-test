@@ -8,10 +8,10 @@ jobs:
       fail-fast: false
       matrix:
         build: [
-          {name: build-test, platform: linux/amd64, os: ubuntu-latest},
-          {name: build-test, platform: windows/amd64, os: windows-latest},
-          {name: build-test, platform: darwin/amd64, os: macos-latest},
-          {name: build-test, platform: darwin/arm64, os: macos-latest}
+          {name: build-test, platform: linux/amd64, os: ubuntu-latest, artifact: linux-amd64},
+          {name: build-test, platform: windows/amd64, os: windows-latest, artifact: windows-amd64},
+          {name: build-test, platform: darwin/amd64, os: macos-latest, artifact: macos-amd64},
+          {name: build-test, platform: darwin/arm64, os: macos-latest, artifact: macos-arm64}
         ]
     runs-on: ${{ matrix.build.os }}
     steps:
@@ -28,14 +28,9 @@ jobs:
         run: |
           ls -la build/bin/
           chmod +x build/bin/*.app/Contents/MacOS/*
-          ditto -c -k --keepParent "build/bin/build-test.app" "build/bin/${{ matrix.build.name }}-${{ matrix.build.platform }}.zip"
-      - name: Set artifact name
-        run: |
-          ARTIFACT_NAME="${{ matrix.build.name }}-${{ matrix.build.platform }}"
-          ARTIFACT_NAME="${ARTIFACT_NAME//\//-}"
-          echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV
+          ditto -c -k --keepParent "build/bin/build-test.app" "build/bin/${{ matrix.build.artifact }}.zip"
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.ARTIFACT_NAME }}
+          name: ${{ matrix.build.artifact }}
           path: build/bin/${{ matrix.build.name }}*
