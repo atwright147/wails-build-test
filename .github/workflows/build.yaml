@@ -29,7 +29,7 @@ jobs:
           chmod +x build/bin/build-test.app/Contents/MacOS/*
           ditto -c -k --keepParent ./build/bin/build-test.app ./build/bin/${{ matrix.build.name }}-${{ matrix.build.platform }}.zip
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.build.name }}-${{ matrix.build.platform }}
           path: build/bin/${{ matrix.build.name }}*
