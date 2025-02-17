@@ -3,7 +3,6 @@ name: Wails build
 on: [push, pull_request]
 
 jobs:
-  # First build all platform-specific binaries
   build:
     strategy:
       fail-fast: false
@@ -24,62 +23,66 @@ jobs:
           build-name: ${{ matrix.build.name }}
           build-platform: ${{ matrix.build.platform }}
           build-obfuscate: true
-
-      # Upload platform-specific artifacts (except macOS which will be handled later)
-      - name: Upload non-macOS artifacts
-        if: matrix.build.platform != 'darwin/amd64' && matrix.build.platform != 'darwin/arm64'
+      - name: Package macOS application
+        if: matrix.build.platform == 'darwin/amd64' || matrix.build.platform == 'darwin/arm64'
+        run: |
+          ls -la build/bin/
+          chmod +x build/bin/.app/Contents/MacOS/
+          ditto -c -k --keepParent "build/bin/build-test.app" "build/bin/${{ matrix.build.name }}-${{ matrix.build.platform }}.zip"
+      - name: Set artifact name
+        run: |
+          ARTIFACT_NAME="${{ matrix.build.name }}-${{ matrix.build.platform }}"
+          ARTIFACT_NAME="${ARTIFACT_NAME//\//-}"
+          echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.build.name }}-${{ matrix.build.platform }}
+          name: ${{ env.ARTIFACT_NAME }}
           path: build/bin/${{ matrix.build.name }}*
 
-      # For macOS builds, upload the app as an intermediate artifact
-      - name: Upload macOS intermediate artifacts
-        if: matrix.build.platform == 'darwin/amd64' || matrix.build.platform == 'darwin/arm64'
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.build.name }}-${{ matrix.build.platform }}-intermediate
-          path: build/bin/${{ matrix.build.name }}.app
-
-  # Create universal macOS binary
-  universal-macos:
+  create-universal-binary:
     needs: build
     runs-on: macos-latest
     steps:
-      - name: Download Intel macOS build
+      - name: Download amd64 artifact
         uses: actions/download-artifact@v4
         with:
-          name: ${{ github.event.repository.name }}-darwin-amd64-intermediate
-          path: build/bin/intel
+          name: build-test-darwin-amd64
+          path: amd64-build
 
-      - name: Download Apple Silicon macOS build
+      - name: Download arm64 artifact
         uses: actions/download-artifact@v4
         with:
-          name: ${{ github.event.repository.name }}-darwin-arm64-intermediate
-          path: build/bin/arm
+          name: build-test-darwin-arm64
+          path: arm64-build
 
       - name: Create universal binary
         run: |
-          mkdir -p build/bin/universal/build-test.app/Contents/MacOS
+          # First extract both zip files
+          unzip "amd64-build/build-test-darwin-amd64.zip" -d amd64-app
+          unzip "arm64-build/build-test-darwin-arm64.zip" -d arm64-app
 
-          # Copy app structure from either build (they should be identical except for the binary)
-          cp -R build/bin/intel/build-test.app/Contents/Resources build/bin/universal/build-test.app/Contents/
-          cp -R build/bin/intel/build-test.app/Contents/Info.plist build/bin/universal/build-test.app/Contents/
+          # Create directory structure for universal binary
+          mkdir -p universal-app/build-test.app/Contents/MacOS
 
-          # Create universal binary using lipo
+          # Use lipo to combine the binaries
           lipo -create \
-            build/bin/intel/build-test.app/Contents/MacOS/build-test \
-            build/bin/arm/build-test.app/Contents/MacOS/build-test \
-            -output build/bin/universal/build-test.app/Contents/MacOS/build-test
+            "amd64-app/build-test.app/Contents/MacOS/build-test" \
+            "arm64-app/build-test.app/Contents/MacOS/build-test" \
+            -output "universal-app/build-test.app/Contents/MacOS/build-test"
 
-          # Set executable permissions
-          chmod +x build/bin/universal/build-test.app/Contents/MacOS/build-test
+          # Copy all other necessary files (Info.plist, resources, etc.)
+          cp -R amd64-app/build-test.app/Contents/Resources universal-app/build-test.app/Contents/
+          cp amd64-app/build-test.app/Contents/Info.plist universal-app/build-test.app/Contents/
 
-          # Package the universal app
-          ditto -c -k --keepParent build/bin/universal/build-test.app build/bin/build-test-universal-macos.zip
+          # Make the binary executable
+          chmod +x universal-app/build-test.app/Contents/MacOS/build-test
 
-      - name: Upload universal macOS app
+          # Create zip of universal app
+          ditto -c -k --keepParent "universal-app/build-test.app" "build-test-darwin-universal.zip"
+
+      - name: Upload universal binary
         uses: actions/upload-artifact@v4
         with:
-          name: build-test-universal-macos
-          path: build/bin/build-test-universal-macos.zip
+          name: build-test-darwin-universal
+          path: build-test-darwin-universal.zip
