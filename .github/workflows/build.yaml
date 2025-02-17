@@ -20,7 +20,7 @@ jobs:
           submodules: recursive
       - uses: dAppServer/wails-build-action@main
         with:
-          build-name: build-test-${{ env.PLATFORM_SAFE }} # For the executable inside
+          build-name: build-test-${{ matrix.build.platform//\//- }} # Name for the executable INSIDE
           build-platform: ${{ matrix.build.platform }}
           build-obfuscate: true
       - name: Set platform variable
@@ -30,9 +30,9 @@ jobs:
       - name: Package macOS application
         if: matrix.build.platform == 'darwin/amd64' || matrix.build.platform == 'darwin/arm64'
         run: |
-          APP_NAME="build-test" # The .app bundle name is ALWAYS build-test.app
-          chmod +x build/bin/${APP_NAME}.app/Contents/MacOS/${APP_NAME}-${{ env.PLATFORM_SAFE }} # Correct chmod path!
-          ditto -c -k --keepParent "build/bin/${APP_NAME}.app" "build/bin/${{ matrix.build.artifact }}.zip" # Correct ditto path!
+          APP_NAME="build-test" # .app bundle is ALWAYS named build-test.app
+          chmod +x build/bin/${APP_NAME}.app/Contents/MacOS/${APP_NAME}-${{ env.PLATFORM_SAFE }} # Correct chmod path
+          ditto -c -k --keepParent "build/bin/${APP_NAME}.app" "build/bin/${{ matrix.build.artifact }}.zip" # Correct ditto path
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
