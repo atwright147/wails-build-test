@@ -32,7 +32,7 @@ jobs:
         with:
           build-name: wails
           build-platform: darwin/arm64
-          # sign: "false"
+          sign: "false"
           # sign-macos-apple-password: ${{ secrets.APPLE_PASSWORD }}
           # sign-macos-app-id: "Developer ID Application: Lethean LTD (W2DNA5L5DY)"
           # sign-macos-app-cert: ${{ secrets.MAC_DEVELOPER_CERT }}
@@ -52,7 +52,7 @@ jobs:
         with:
           build-name: wails
           build-platform: darwin/amd64
-          # sign: "false"
+          sign: "false"
           # sign-macos-apple-password: ${{ secrets.APPLE_PASSWORD }}
           # sign-macos-app-id: "Developer ID Application: Lethean LTD (W2DNA5L5DY)"
           # sign-macos-app-cert: ${{ secrets.MAC_DEVELOPER_CERT }}
