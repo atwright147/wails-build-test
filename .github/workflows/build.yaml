@@ -1,102 +1,36 @@
-name: Wails build
+name: Wails macOS Build
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
-    strategy:
-      fail-fast: false
-      matrix:
-        build: [
-          {name: build-test, platform: linux/amd64, os: ubuntu-latest},
-          {name: build-test, platform: windows/amd64, os: windows-latest},
-          {name: build-test, platform: darwin/amd64, os: macos-latest},
-          {name: build-test, platform: darwin/arm64, os: macos-latest}
-        ]
-    runs-on: ${{ matrix.build.os }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-      - uses: dAppServer/wails-build-action@main
-        with:
-          build-name: ${{ matrix.build.name }}
-          build-platform: ${{ matrix.build.platform }}
-          build-obfuscate: true
-      - name: Package macOS application
-        if: matrix.build.platform == 'darwin/amd64' || matrix.build.platform == 'darwin/arm64'
-        run: |
-          ls -la build/bin/
-          chmod +x build/bin/build-test.app/Contents/MacOS/build-test
-          ditto -c -k --keepParent "build/bin/build-test.app" "build/bin/${{ matrix.build.name }}-${{ matrix.build.platform }}.zip"
-      - name: Set artifact name
-        run: |
-          ARTIFACT_NAME="${{ matrix.build.name }}-${{ matrix.build.platform }}-${{ github.run_id }}"
-          ARTIFACT_NAME="${ARTIFACT_NAME//\//-}"
-          echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV
-        shell: bash
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.ARTIFACT_NAME }}
-          path: build/bin/${{ matrix.build.name }}*
-
-  create-universal-binary:
-    needs: build
+    name: Build macOS (amd64 and arm64)
     runs-on: macos-latest
     steps:
-      - name: Download amd64 artifact
-        uses: actions/download-artifact@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
         with:
-          name: build-test-darwin-amd64-${{ github.run_id }}
-          path: amd64-build
+          submodules: recursive
 
-      - name: Download arm64 artifact
-        uses: actions/download-artifact@v4
+      - name: Build for macOS amd64
+        uses: dAppServer/wails-build-action@v2
         with:
-          name: build-test-darwin-arm64-${{ github.run_id }}
-          path: arm64-build
+          build-name: myWailsApp
+          build-platform: darwin/amd64
+          wails-version: latest
+          go-version: 1.23
+          node-version: 22.11
 
-      - name: List downloaded files
-        run: |
-          echo "amd64 files:"
-          ls -la amd64-build/
-          echo "arm64 files:"
-          ls -la arm64-build/
-
-      - name: Create universal binary
-        run: |
-          # First extract both zip files
-          unzip "amd64-build/build-test-darwin-amd64.zip" -d amd64-app
-          unzip "arm64-build/build-test-darwin-arm64.zip" -d arm64-app
-
-          # List extracted files
-          echo "Extracted amd64 files:"
-          ls -la amd64-app
-          echo "Extracted arm64 files:"
-          ls -la arm64-app
-
-          # Create directory structure for universal binary
-          mkdir -p universal-app/build-test.app/Contents/MacOS
-
-          # Use lipo to combine the binaries
-          lipo -create \
-            "amd64-app/build-test.app/Contents/MacOS/build-test" \
-            "arm64-app/build-test.app/Contents/MacOS/build-test" \
-            -output "universal-app/build-test.app/Contents/MacOS/build-test"
-
-          # Copy all other necessary files from one of the builds (using amd64 as source)
-          cp -R amd64-app/build-test.app/Contents/Resources universal-app/build-test.app/Contents/
-          cp amd64-app/build-test.app/Contents/Info.plist universal-app/build-test.app/Contents/
-
-          # Make the binary executable
-          chmod +x universal-app/build-test.app/Contents/MacOS/build-test
-
-          # Create zip of universal app
-          ditto -c -k --keepParent "universal-app/build-test.app" "build-test-darwin-universal.zip"
-
-      - name: Upload universal binary
-        uses: actions/upload-artifact@v4
+      - name: Build for macOS arm64
+        uses: dAppServer/wails-build-action@v2
         with:
-          name: build-test-darwin-universal-${{ github.run_id }}
-          path: build-test-darwin-universal.zip
+          build-name: myWailsApp
+          build-platform: darwin/arm64
+          wails-version: latest
+          go-version: 1.23
+          node-version: 22.11
