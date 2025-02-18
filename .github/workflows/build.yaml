@@ -18,7 +18,7 @@ jobs:
           submodules: recursive
 
       - name: Build for macOS amd64
-        uses: dAppServer/wails-build-action@v2
+        uses: dAppServer/wails-build-action@main
         with:
           build-name: myWailsApp
           build-platform: darwin/amd64
@@ -27,7 +27,7 @@ jobs:
           node-version: 22.11
 
       - name: Build for macOS arm64
-        uses: dAppServer/wails-build-action@v2
+        uses: dAppServer/wails-build-action@main
         with:
           build-name: myWailsApp
           build-platform: darwin/arm64
