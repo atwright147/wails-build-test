@@ -20,17 +20,29 @@ jobs:
       - name: Build for macOS amd64
         uses: dAppServer/wails-build-action@main
         with:
-          build-name: myWailsApp-darwin-amd64
+          build-name: myWailsApp
           build-platform: darwin/amd64
           wails-version: latest
           go-version: 1.23
           node-version: 22.11
 
+      - name: Rename amd64 app
+        run: |
+          if [ -d "./build/bin/myWailsApp.app" ]; then
+            mv ./build/bin/myWailsApp.app ./build/bin/myWailsApp-darwin-amd64.app
+          fi
+
       - name: Build for macOS arm64
         uses: dAppServer/wails-build-action@main
         with:
-          build-name: myWailsApp-darwin-arm64
+          build-name: myWailsApp
           build-platform: darwin/arm64
           wails-version: latest
           go-version: 1.23
           node-version: 22.11
+
+      - name: Rename arm64 app
+        run: |
+          if [ -d "./build/bin/myWailsApp.app" ]; then
+            mv ./build/bin/myWailsApp.app ./build/bin/myWailsApp-darwin-arm64.app
+          fi
