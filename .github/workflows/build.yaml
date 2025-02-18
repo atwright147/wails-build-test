@@ -20,7 +20,7 @@ jobs:
       - name: Build for macOS amd64
         uses: dAppServer/wails-build-action@main
         with:
-          build-name: myWailsApp
+          build-name: myWailsApp-darwin-amd64
           build-platform: darwin/amd64
           wails-version: latest
           go-version: 1.23
@@ -29,7 +29,7 @@ jobs:
       - name: Build for macOS arm64
         uses: dAppServer/wails-build-action@main
         with:
-          build-name: myWailsApp
+          build-name: myWailsApp-darwin-arm64
           build-platform: darwin/arm64
           wails-version: latest
           go-version: 1.23
