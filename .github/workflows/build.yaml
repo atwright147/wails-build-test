@@ -1,89 +1,51 @@
-name: Wails macOS Build
+name: Wails build
 
 on:
   push:
     branches: [ main ]
-    tags: [ 'v*' ]
-  pull_request:
-    branches: [ main ]
+    tags:
+    # Match any new tag
+      - '*'
+
+env:
+  # Necessary for most environments as build failure can occur due to OOM issues
+  NODE_OPTIONS: "--max-old-space-size=4096"
 
 jobs:
   build:
-    name: Build macOS (amd64 and arm64)
-    runs-on: macos-latest
+    strategy:
+    # Failure in one platform build won't impact the others
+      fail-fast: false
+      matrix:
+        build:
+          - name: 'Suspects'
+            platform:  'linux/amd64'
+            os: 'ubuntu-latest'
+          - name: 'Suspects'
+            platform:  'windows/amd64'
+            os: 'windows-latest'
+          - name: 'Suspects'
+            platform:  'darwin/amd64'
+            os: 'macos-latest'
+          - name: 'Suspects'
+            platform:  'darwin/arm64'
+            os: 'macos-latest'
+          - name: 'Suspects'
+            platform:  'darwin/universal'
+            os: 'macos-latest'
+
+    runs-on: ${{ matrix.build.os }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v2
         with:
           submodules: recursive
 
-      - name: Build for macOS amd64
-        uses: dAppServer/wails-build-action@main
+      - name: Build wails
+        uses: dAppServer/wails-build-action@v2.2
+        id: build
         with:
-          build-name: myWailsApp
-          build-platform: darwin/amd64
-          wails-version: latest
-          go-version: 1.23
-          node-version: 22.11
-
-      - name: Debug amd64 build output
-        run: |
-          echo "Listing build directory contents:"
-          ls -la build/
-          echo "Listing bin directory contents:"
-          ls -la build/bin/
-          echo "Checking for .app bundle:"
-          find ./build -name "*.app" -type d
-
-      - name: Rename amd64 app
-        run: |
-          APP_PATH=$(find ./build -name "*.app" -type d | head -n 1)
-          if [ -n "$APP_PATH" ]; then
-            echo "Found app bundle at: $APP_PATH"
-            TARGET_NAME=$(basename "$APP_PATH" | sed 's/\.app$/-darwin-amd64.app/')
-            TARGET_PATH="./build/bin/$TARGET_NAME"
-            echo "Renaming to: $TARGET_PATH"
-            mkdir -p ./build/bin
-            mv "$APP_PATH" "$TARGET_PATH"
-          else
-            echo "No .app bundle found!"
-            exit 1
-          fi
-
-      - name: Build for macOS arm64
-        uses: dAppServer/wails-build-action@main
-        with:
-          build-name: myWailsApp
-          build-platform: darwin/arm64
-          wails-version: latest
-          go-version: 1.23
-          node-version: 22.11
-
-      - name: Debug arm64 build output
-        run: |
-          echo "Listing build directory contents:"
-          ls -la build/
-          echo "Listing bin directory contents:"
-          ls -la build/bin/
-          echo "Checking for .app bundle:"
-          find ./build -name "*.app" -type d
-
-      - name: Rename arm64 app
-        run: |
-          APP_PATH=$(find ./build -name "*.app" -type d | head -n 1)
-          if [ -n "$APP_PATH" ]; then
-            echo "Found app bundle at: $APP_PATH"
-            TARGET_NAME=$(basename "$APP_PATH" | sed 's/\.app$/-darwin-arm64.app/')
-            TARGET_PATH="./build/bin/$TARGET_NAME"
-            echo "Renaming to: $TARGET_PATH"
-            mkdir -p ./build/bin
-            mv "$APP_PATH" "$TARGET_PATH"
-          else
-            echo "No .app bundle found!"
-            exit 1
-          fi
-
-      - name: Final directory listing
-        run: |
-          echo "Final build/bin contents:"
-          ls -la build/bin/
+          build-name: ${{ matrix.build.name }}
+          build-platform: ${{ matrix.build.platform }}
+          package: true
+          go-version: '1.22'
