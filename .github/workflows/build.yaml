@@ -26,10 +26,28 @@ jobs:
           go-version: 1.23
           node-version: 22.11
 
+      - name: Debug amd64 build output
+        run: |
+          echo "Listing build directory contents:"
+          ls -la build/
+          echo "Listing bin directory contents:"
+          ls -la build/bin/
+          echo "Checking for .app bundle:"
+          find ./build -name "*.app" -type d
+
       - name: Rename amd64 app
         run: |
-          if [ -d "./build/bin/myWailsApp.app" ]; then
-            mv ./build/bin/myWailsApp.app ./build/bin/myWailsApp-darwin-amd64.app
+          APP_PATH=$(find ./build -name "*.app" -type d | head -n 1)
+          if [ -n "$APP_PATH" ]; then
+            echo "Found app bundle at: $APP_PATH"
+            TARGET_NAME=$(basename "$APP_PATH" | sed 's/\.app$/-darwin-amd64.app/')
+            TARGET_PATH="./build/bin/$TARGET_NAME"
+            echo "Renaming to: $TARGET_PATH"
+            mkdir -p ./build/bin
+            mv "$APP_PATH" "$TARGET_PATH"
+          else
+            echo "No .app bundle found!"
+            exit 1
           fi
 
       - name: Build for macOS arm64
@@ -41,8 +59,31 @@ jobs:
           go-version: 1.23
           node-version: 22.11
 
+      - name: Debug arm64 build output
+        run: |
+          echo "Listing build directory contents:"
+          ls -la build/
+          echo "Listing bin directory contents:"
+          ls -la build/bin/
+          echo "Checking for .app bundle:"
+          find ./build -name "*.app" -type d
+
       - name: Rename arm64 app
         run: |
-          if [ -d "./build/bin/myWailsApp.app" ]; then
-            mv ./build/bin/myWailsApp.app ./build/bin/myWailsApp-darwin-arm64.app
+          APP_PATH=$(find ./build -name "*.app" -type d | head -n 1)
+          if [ -n "$APP_PATH" ]; then
+            echo "Found app bundle at: $APP_PATH"
+            TARGET_NAME=$(basename "$APP_PATH" | sed 's/\.app$/-darwin-arm64.app/')
+            TARGET_PATH="./build/bin/$TARGET_NAME"
+            echo "Renaming to: $TARGET_PATH"
+            mkdir -p ./build/bin
+            mv "$APP_PATH" "$TARGET_PATH"
+          else
+            echo "No .app bundle found!"
+            exit 1
           fi
+
+      - name: Final directory listing
+        run: |
+          echo "Final build/bin contents:"
+          ls -la build/bin/
