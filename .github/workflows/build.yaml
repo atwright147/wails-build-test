@@ -1,5 +1,5 @@
 name: Wails Build
-
+#
 on:
   push:
     branches: [ "main" ]
