@@ -40,7 +40,24 @@ jobs:
   #     - name: List build directory contents
   #       run: ls -R ./build/bin; exit 1
 
-  macos-amd64:
+  # macos-amd64:
+  #   runs-on: macos-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         submodules: recursive
+  #     - uses: dAppServer/wails-build-action@main
+  #       with:
+  #         build-name: build-test
+  #         build-platform: darwin/amd64
+  #         sign: false
+  #         wails-version: 'v2.9.3'
+  #         package: false
+  #     - name: Setup tmate session
+  #       if: ${{ failure() }}
+  #       uses: mxschmitt/action-tmate@v3
+
+  macos-universal:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
@@ -49,13 +66,13 @@ jobs:
       - uses: dAppServer/wails-build-action@main
         with:
           build-name: build-test
-          build-platform: darwin/amd64
+          build-platform: darwin/universal
           sign: false
           wails-version: 'v2.9.3'
           package: false
-      - name: Setup tmate session
-        if: ${{ failure() }}
-        uses: mxschmitt/action-tmate@v3
+      # - name: Setup tmate session
+      #   if: ${{ failure() }}
+      #   uses: mxschmitt/action-tmate@v3
 
 
   # windows2025:
