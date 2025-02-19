@@ -15,6 +15,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.6'
       - uses: dAppServer/wails-build-action@main
         with:
           build-name: wails
@@ -28,18 +32,15 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.6'
       - uses: dAppServer/wails-build-action@main
         with:
           build-name: wails
           build-platform: darwin/arm64
           sign: false
-          # sign-macos-apple-password: ${{ secrets.APPLE_PASSWORD }}
-          # sign-macos-app-id: "Developer ID Application: Lethean LTD (W2DNA5L5DY)"
-          # sign-macos-app-cert: ${{ secrets.MAC_DEVELOPER_CERT }}
-          # sign-macos-app-cert-password: ${{ secrets.MAC_DEVELOPER_PASS }}
-          # sign-macos-installer-id: "Developer ID Installer: Lethean LTD (W2DNA5L5DY)"
-          # sign-macos-installer-cert: ${{ secrets.MAC_DEVELOPER_INSTALL_CERT }}
-          # sign-macos-installer-cert-password: ${{ secrets.MAC_DEVELOPER_INSTALL_PASS }}
           package: false # Do not try to upload to github
 
   macos15amd64:
@@ -48,18 +49,15 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.6'
       - uses: dAppServer/wails-build-action@main
         with:
           build-name: wails
           build-platform: darwin/amd64
           sign: false
-          # sign-macos-apple-password: ${{ secrets.APPLE_PASSWORD }}
-          # sign-macos-app-id: "Developer ID Application: Lethean LTD (W2DNA5L5DY)"
-          # sign-macos-app-cert: ${{ secrets.MAC_DEVELOPER_CERT }}
-          # sign-macos-app-cert-password: ${{ secrets.MAC_DEVELOPER_PASS }}
-          # sign-macos-installer-id: "Developer ID Installer: Lethean LTD (W2DNA5L5DY)"
-          # sign-macos-installer-cert: ${{ secrets.MAC_DEVELOPER_INSTALL_CERT }}
-          # sign-macos-installer-cert-password: ${{ secrets.MAC_DEVELOPER_INSTALL_PASS }}
           package: false # Do not try to upload to github
 
   windows2025:
@@ -68,6 +66,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.6'
       - uses: dAppServer/wails-build-action@main
         with:
           build-name: wails.exe
