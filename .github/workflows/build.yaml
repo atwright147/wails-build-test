@@ -20,6 +20,7 @@ jobs:
           build-name: wails
           build-platform: linux/amd64
           wails-build-webview2: "embed"
+          go-version: '1.22'
           package: false # Do not try to upload to github
 
   macos15arm64:
@@ -33,6 +34,7 @@ jobs:
           build-name: wails
           build-platform: darwin/arm64
           sign: false
+          go-version: '1.22'
           package: false # Do not try to upload to github
 
   macos15amd64:
@@ -46,6 +48,7 @@ jobs:
           build-name: wails
           build-platform: darwin/amd64
           sign: false
+          go-version: '1.22'
           package: false # Do not try to upload to github
 
   windows2025:
@@ -60,4 +63,5 @@ jobs:
           build-platform: windows/amd64
           wails-build-webview2: "embed"
           nsis: 'false'
+          go-version: '1.22'
           package: false # Do not try to upload to github
