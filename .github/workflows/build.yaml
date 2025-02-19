@@ -53,6 +53,10 @@ jobs:
           sign: false
           wails-version: 'v2.9.3'
           package: false
+      - name: Setup tmate session
+        if: ${{ failure() }}
+        uses: mxschmitt/action-tmate@v3
+
 
   # windows2025:
   #   runs-on: windows-2025
