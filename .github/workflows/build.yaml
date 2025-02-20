@@ -20,7 +20,19 @@ jobs:
           build-name: wails
           build-platform: linux/amd64
           wails-build-webview2: "embed"
-          wails-version: 'v2.9.3'
+          package: false # Do not try to upload to github
+
+  linux-arm64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: dAppServer/wails-build-action@main
+        with:
+          build-name: wails
+          build-platform: linux/arm64
+          wails-build-webview2: "embed"
           package: false # Do not try to upload to github
 
   macos-arm64:
@@ -34,7 +46,6 @@ jobs:
           build-name: build-test
           build-platform: darwin/arm64
           sign: false
-          wails-version: 'v2.9.3'
           package: false # Do not try to upload to github
 
   macos-amd64:
@@ -48,7 +59,6 @@ jobs:
           build-name: build-test
           build-platform: darwin/amd64
           sign: false
-          wails-version: 'v2.9.3'
           package: false
 
   macos-universal:
@@ -62,11 +72,10 @@ jobs:
           build-name: build-test
           build-platform: darwin/universal
           sign: false
-          wails-version: 'v2.9.3'
           package: false
 
   windows-amd64:
-    runs-on: windows-2025
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
         with:
@@ -76,6 +85,19 @@ jobs:
           build-name: wails.exe
           build-platform: windows/amd64
           wails-build-webview2: "embed"
-          nsis: 'false'
-          go-version: '1.22'
+          nsis: false
+          package: false # Do not try to upload to github
+
+  windows-arm64:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: dAppServer/wails-build-action@main
+        with:
+          build-name: wails.exe
+          build-platform: windows/arm64
+          wails-build-webview2: "embed"
+          nsis: false
           package: false # Do not try to upload to github
