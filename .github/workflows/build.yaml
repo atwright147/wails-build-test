@@ -9,53 +9,47 @@ on:
   workflow_dispatch:
 
 jobs:
-  # ubuntu2404:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #       with:
-  #         submodules: recursive
-  #     - uses: dAppServer/wails-build-action@main
-  #       with:
-  #         build-name: wails
-  #         build-platform: linux/amd64
-  #         wails-build-webview2: "embed"
-  #         go-version: '1.22'
-  #         package: false # Do not try to upload to github
+  linux-amd64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: dAppServer/wails-build-action@main
+        with:
+          build-name: wails
+          build-platform: linux/amd64
+          wails-build-webview2: "embed"
+          wails-version: 'v2.9.3'
+          package: false # Do not try to upload to github
 
-  # macos15arm64:
-  #   runs-on: macos-15
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #       with:
-  #         submodules: recursive
-  #     - uses: dAppServer/wails-build-action@main
-  #       with:
-  #         build-name: wails
-  #         build-platform: darwin/arm64
-  #         sign: false
-  #         # go-version: '1.22'
-  #         wails-version: 'v2.9.3'
-  #         package: false # Do not try to upload to github
-  #     - name: List build directory contents
-  #       run: ls -R ./build/bin; exit 1
+  macos-arm64:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: dAppServer/wails-build-action@main
+        with:
+          build-name: build-test
+          build-platform: darwin/arm64
+          sign: false
+          wails-version: 'v2.9.3'
+          package: false # Do not try to upload to github
 
-  # macos-amd64:
-  #   runs-on: macos-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #       with:
-  #         submodules: recursive
-  #     - uses: dAppServer/wails-build-action@main
-  #       with:
-  #         build-name: build-test
-  #         build-platform: darwin/amd64
-  #         sign: false
-  #         wails-version: 'v2.9.3'
-  #         package: false
-  #     - name: Setup tmate session
-  #       if: ${{ failure() }}
-  #       uses: mxschmitt/action-tmate@v3
+  macos-amd64:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: dAppServer/wails-build-action@main
+        with:
+          build-name: build-test
+          build-platform: darwin/amd64
+          sign: false
+          wails-version: 'v2.9.3'
+          package: false
 
   macos-universal:
     runs-on: macos-latest
@@ -70,22 +64,18 @@ jobs:
           sign: false
           wails-version: 'v2.9.3'
           package: false
-      # - name: Setup tmate session
-      #   if: ${{ failure() }}
-      #   uses: mxschmitt/action-tmate@v3
 
-
-  # windows2025:
-  #   runs-on: windows-2025
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #       with:
-  #         submodules: recursive
-  #     - uses: dAppServer/wails-build-action@main
-  #       with:
-  #         build-name: wails.exe
-  #         build-platform: windows/amd64
-  #         wails-build-webview2: "embed"
-  #         nsis: 'false'
-  #         go-version: '1.22'
-  #         package: false # Do not try to upload to github
+  windows-amd64:
+    runs-on: windows-2025
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: dAppServer/wails-build-action@main
+        with:
+          build-name: wails.exe
+          build-platform: windows/amd64
+          wails-build-webview2: "embed"
+          nsis: 'false'
+          go-version: '1.22'
+          package: false # Do not try to upload to github
