@@ -10,7 +10,7 @@ on:
 
 jobs:
   linux-amd64:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-amd64-latest
     steps:
       - uses: actions/checkout@v4
         with:
@@ -23,7 +23,7 @@ jobs:
           package: false # Do not try to upload to github
 
   linux-arm64:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-arm64-latest
     steps:
       - uses: actions/checkout@v4
         with:
@@ -75,7 +75,7 @@ jobs:
           package: false
 
   windows-amd64:
-    runs-on: windows-latest
+    runs-on: windows-amd64-latest
     steps:
       - uses: actions/checkout@v4
         with:
@@ -89,7 +89,7 @@ jobs:
           package: false # Do not try to upload to github
 
   windows-arm64:
-    runs-on: windows-latest
+    runs-on: windows-arm64-latest
     steps:
       - uses: actions/checkout@v4
         with:
