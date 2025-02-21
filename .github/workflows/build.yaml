@@ -10,7 +10,7 @@ on:
 
 jobs:
   linux-amd64:
-    runs-on: ubuntu-amd64-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
         with:
@@ -24,7 +24,7 @@ jobs:
           wails-version: 'v2.9.3'
 
   linux-arm64:
-    runs-on: ubuntu-arm64-latest
+    runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/checkout@v4
         with:
@@ -52,7 +52,7 @@ jobs:
           wails-version: 'v2.9.3'
 
   macos-amd64:
-    runs-on: macos-latest
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
         with:
@@ -66,7 +66,7 @@ jobs:
           wails-version: 'v2.9.3'
 
   macos-universal:
-    runs-on: macos-latest
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
         with:
@@ -80,7 +80,7 @@ jobs:
           wails-version: 'v2.9.3'
 
   windows-amd64:
-    runs-on: windows-amd64-latest
+    runs-on: windows-2025
     steps:
       - uses: actions/checkout@v4
         with:
@@ -89,21 +89,6 @@ jobs:
         with:
           build-name: wails.exe
           build-platform: windows/amd64
-          wails-build-webview2: "embed"
-          nsis: false
-          package: false # Do not try to upload to github
-          wails-version: 'v2.9.3'
-
-  windows-arm64:
-    runs-on: windows-arm64-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-      - uses: dAppServer/wails-build-action@main
-        with:
-          build-name: wails.exe
-          build-platform: windows/arm64
           wails-build-webview2: "embed"
           nsis: false
           package: false # Do not try to upload to github
