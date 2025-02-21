@@ -9,61 +9,61 @@ on:
   workflow_dispatch:
 
 jobs:
-  linux-amd64:
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-      - uses: dAppServer/wails-build-action@main
-        with:
-          build-name: wails
-          build-platform: linux/amd64
-          wails-build-webview2: "embed"
-          package: true # Do not try to upload to github
-          wails-version: 'v2.9.3'
+  # linux-amd64:
+  #   runs-on: ubuntu-24.04
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         submodules: recursive
+  #     - uses: dAppServer/wails-build-action@main
+  #       with:
+  #         build-name: wails
+  #         build-platform: linux/amd64
+  #         wails-build-webview2: "embed"
+  #         package: true # Do not try to upload to github
+  #         wails-version: 'v2.9.3'
 
-  linux-arm64:
-    runs-on: ubuntu-24.04-arm
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-      - uses: dAppServer/wails-build-action@main
-        with:
-          build-name: wails
-          build-platform: linux/arm64
-          wails-build-webview2: "embed"
-          package: true # Do not try to upload to github
-          wails-version: 'v2.9.3'
+  # linux-arm64:
+  #   runs-on: ubuntu-24.04-arm
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         submodules: recursive
+  #     - uses: dAppServer/wails-build-action@main
+  #       with:
+  #         build-name: wails
+  #         build-platform: linux/arm64
+  #         wails-build-webview2: "embed"
+  #         package: true # Do not try to upload to github
+  #         wails-version: 'v2.9.3'
 
-  macos-arm64:
-    runs-on: macos-15
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-      - uses: dAppServer/wails-build-action@main
-        with:
-          build-name: build-test
-          build-platform: darwin/arm64
-          sign: false
-          package: true # Do not try to upload to github
-          wails-version: 'v2.9.3'
+  # macos-arm64:
+  #   runs-on: macos-15
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         submodules: recursive
+  #     - uses: dAppServer/wails-build-action@main
+  #       with:
+  #         build-name: build-test
+  #         build-platform: darwin/arm64
+  #         sign: false
+  #         package: true # Do not try to upload to github
+  #         wails-version: 'v2.9.3'
 
-  macos-amd64:
-    runs-on: macos-15
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-      - uses: dAppServer/wails-build-action@main
-        with:
-          build-name: build-test
-          build-platform: darwin/amd64
-          sign: false
-          package: true
-          wails-version: 'v2.9.3'
+  # macos-amd64:
+  #   runs-on: macos-15
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         submodules: recursive
+  #     - uses: dAppServer/wails-build-action@main
+  #       with:
+  #         build-name: build-test
+  #         build-platform: darwin/amd64
+  #         sign: false
+  #         package: true
+  #         wails-version: 'v2.9.3'
 
   macos-universal:
     runs-on: macos-15
