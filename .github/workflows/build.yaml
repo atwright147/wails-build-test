@@ -20,7 +20,7 @@ jobs:
           build-name: wails
           build-platform: linux/amd64
           wails-build-webview2: "embed"
-          package: false # Do not try to upload to github
+          package: true # Do not try to upload to github
           wails-version: 'v2.9.3'
 
   linux-arm64:
@@ -34,7 +34,7 @@ jobs:
           build-name: wails
           build-platform: linux/arm64
           wails-build-webview2: "embed"
-          package: false # Do not try to upload to github
+          package: true # Do not try to upload to github
           wails-version: 'v2.9.3'
 
   macos-arm64:
@@ -48,7 +48,7 @@ jobs:
           build-name: build-test
           build-platform: darwin/arm64
           sign: false
-          package: false # Do not try to upload to github
+          package: true # Do not try to upload to github
           wails-version: 'v2.9.3'
 
   macos-amd64:
@@ -62,7 +62,7 @@ jobs:
           build-name: build-test
           build-platform: darwin/amd64
           sign: false
-          package: false
+          package: true
           wails-version: 'v2.9.3'
 
   macos-universal:
@@ -76,7 +76,7 @@ jobs:
           build-name: build-test
           build-platform: darwin/universal
           sign: false
-          package: false
+          package: true
           wails-version: 'v2.9.3'
 
   windows-amd64:
@@ -91,5 +91,5 @@ jobs:
           build-platform: windows/amd64
           wails-build-webview2: "embed"
           nsis: false
-          package: false # Do not try to upload to github
+          package: true # Do not try to upload to github
           wails-version: 'v2.9.3'
