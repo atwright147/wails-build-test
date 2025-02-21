@@ -24,3 +24,6 @@ jobs:
       matrix:
         runner: ${{ fromJSON(needs.runners.outputs.list) }}
     runs-on: ${{ matrix.runner }}
+    steps:
+      - name: Placeholder step
+        run: echo "Running tests on ${{ matrix.runner }}"
